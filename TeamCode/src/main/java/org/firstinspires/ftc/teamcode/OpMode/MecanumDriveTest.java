@@ -15,12 +15,12 @@ public class MecanumDriveTest extends LinearOpMode {
     public static final String RIGHT_REAR_MOTOR_NAME = "motorBR";
     public static final String LEFT_REAR_MOTOR_NAME = "motorBL";
     public static final String LINEAR_SLIDE_MOTOR_NAME = "slide";
-    public static final String INTAKE_MOTOR_NAME = "intake";
     public static final String IMU_NAME = "imu";
     public static final double ENCODER_RESOLUTION = 3895.9; // Change accordingly
     public static final double WHEEL_DIAMETER_CM = 9.6; // Change accordingly
-    public static final int MINIMUM_SLIDE_POSITION = -70; // Change accordingly
-    public static final int MAXIMUM_SLIDE_POSITION = 4141; // Change accordingly
+    public static final double SLIDE_LENGTH_CM = 90; // Change accordingly
+    public int MINIMUM_SLIDE_POSITION; // Change accordingly
+    public int MAXIMUM_SLIDE_POSITION; // Change accordingly
 
     @Override
     public void runOpMode() {
@@ -37,16 +37,12 @@ public class MecanumDriveTest extends LinearOpMode {
                 this
         );
 
-        waitForStart();
-
         double forward, strafe, rotate, scale; // Drive variables
 
         // Set motors
         DcMotor slideMotor = (DcMotor)hardwareMap.get(LINEAR_SLIDE_MOTOR_NAME);
-//        DcMotor intakeMotor = (DcMotor)hardwareMap.get(INTAKE_MOTOR_NAME);
 
         //Set motor behaviors
-//        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -55,6 +51,12 @@ public class MecanumDriveTest extends LinearOpMode {
         double intakePower = 1;
         int slidePosition = 0;
         int slideSpeed = 10;
+
+        waitForStart();
+
+        MINIMUM_SLIDE_POSITION = slideMotor.getCurrentPosition();
+        // TODO: make MAXIMUM_SLIDE_POSITION relative to MINIMUM_SLIDE_POSITION;
+        MAXIMUM_SLIDE_POSITION = MINIMUM_SLIDE_POSITION; // + Slide Length in Encoder ticks;
 
         while (opModeIsActive()) {
 

@@ -18,7 +18,7 @@ public class MecanumDriveTest extends LinearOpMode {
     public static final String IMU_NAME = "imu";
     public static final double ENCODER_RESOLUTION = 3895.9; // Change accordingly
     public static final double WHEEL_DIAMETER_CM = 9.6; // Change accordingly
-    public static final double SLIDE_LENGTH_CM = 90; // Change accordingly
+    public static final int SLIDE_LENGTH_ENCODER_TICKS = 3845; // Change accordingly
     public int MINIMUM_SLIDE_POSITION; // Change accordingly
     public int MAXIMUM_SLIDE_POSITION; // Change accordingly
 
@@ -42,21 +42,18 @@ public class MecanumDriveTest extends LinearOpMode {
         // Set motors
         DcMotor slideMotor = (DcMotor)hardwareMap.get(LINEAR_SLIDE_MOTOR_NAME);
 
-        //Set motor behaviors
-        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        // Set motor behaviors
+        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double slidePower = 0.5;
-        double intakePower = 1;
+        double slidePower = 0;
         int slidePosition = 0;
-        int slideSpeed = 10;
-
-        waitForStart();
 
         MINIMUM_SLIDE_POSITION = slideMotor.getCurrentPosition();
-        // TODO: make MAXIMUM_SLIDE_POSITION relative to MINIMUM_SLIDE_POSITION;
-        MAXIMUM_SLIDE_POSITION = MINIMUM_SLIDE_POSITION; // + Slide Length in Encoder ticks;
+        MAXIMUM_SLIDE_POSITION =  MINIMUM_SLIDE_POSITION + SLIDE_LENGTH_ENCODER_TICKS;
+
+        waitForStart();
 
         while (opModeIsActive()) {
 
@@ -67,9 +64,6 @@ public class MecanumDriveTest extends LinearOpMode {
 
             mecanum.drive(forward, strafe, rotate, scale);
 
-            // Intake Logic
-            // intakeMotor.setPower(intakePower * (gamepad2.right_trigger - gamepad2.left_trigger));
-
             // Slide Logic
             if (gamepad2.dpad_up) {
                 slidePosition = MAXIMUM_SLIDE_POSITION;
@@ -77,7 +71,7 @@ public class MecanumDriveTest extends LinearOpMode {
             }
             else if (gamepad2.dpad_down) {
                 slidePosition = MINIMUM_SLIDE_POSITION;
-                slidePower = -0.5;
+                slidePower = -0.2;
             }
             else slidePower = 0;
             slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -3,7 +3,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Helper.ClawMechanism;
+import org.firstinspires.ftc.teamcode.Helper.ServoMechanism;
 
 @TeleOp(name = "ClawTest", group = "Tests")
 public class ClawTester extends LinearOpMode {
@@ -12,25 +12,25 @@ public class ClawTester extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
 
-        ClawMechanism claw = new ClawMechanism(
-            hardwareMap.servo.get("Servo2"),
-            hardwareMap.servo.get("Servo0")
-        );
-
-        telemetry.update();
-        waitForStart();
-
-        while (opModeIsActive()) {
-
-            if (gamepad1.a) claw.clamp();
-            else if (gamepad1.b) claw.release();
-            else this.sleep(100);
-
-            telemetry.addData("Claw State", claw.getCurrentState());
-
-            telemetry.update();
-
-        }
+//        ServoMechanism claw = new ServoMechanism(
+//            hardwareMap.servo.get("Servo2"),
+//            hardwareMap.servo.get("Servo0")
+//        );
+//
+//        telemetry.update();
+//        waitForStart();
+//
+//        while (opModeIsActive()) {
+//
+//            if (gamepad1.a) claw.clamp();
+//            else if (gamepad1.b) claw.release();
+//            else this.sleep(100);
+//
+//            telemetry.addData("Claw State", claw.getCurrentState());
+//
+//            telemetry.update();
+//
+//        }
 
     }
 }

@@ -214,8 +214,8 @@ public class MecanumDrive {
 	private static DriveMotorConfig calculateMotorPower(double forward, double strafe, double rotate) {
 
 		// Mecanum calculations
-		double leftFrontPower = forward + strafe - rotate;
-		double rightFrontPower = forward - strafe + rotate;
+		double leftFrontPower = -forward + strafe - rotate; // forward is supposed to be positive
+		double rightFrontPower = -forward - strafe + rotate; // forward is supposed to be positive
 		double leftRearPower = forward - strafe - rotate;
 		double rightRearPower = forward + strafe + rotate;
 

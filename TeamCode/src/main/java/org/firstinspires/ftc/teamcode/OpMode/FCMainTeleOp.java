@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Helper.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Helper.ServoMechanism;
@@ -72,24 +73,32 @@ public class FCMainTeleOp extends LinearOpMode {
 
         // Create left claw servo
         ServoMechanism.Builder leftClawBuilder = new ServoMechanism.Builder();
-        leftClawBuilder.setServo(hardwareMap, "leftServo");
+        leftClawBuilder.setServo(hardwareMap, "leftClaw");
         leftClawBuilder.addState("clasped", 0.1); // test and change servoPosition accordingly
         leftClawBuilder.addState("released", 0.4); // test and change servoPosition accordingly
         ServoMechanism leftClaw = leftClawBuilder.build();
 
         // Create right claw servo
-        ServoMechanism.Builder rightClawBuilder = new ServoMechanism.Builder();
-        rightClawBuilder.setServo(hardwareMap, "rightServo");
-        rightClawBuilder.addState("clasped", 0.6); // test and change servoPosition accordingly
-        rightClawBuilder.addState("released", 0.0); // test and change servoPosition accordingly
-        ServoMechanism rightClaw = rightClawBuilder.build();
+        ServoMechanism rightClaw = new ServoMechanism.Builder()
+            .setServo(hardwareMap, "rightClaw")
+            .addState("clasped", 0.6) // test and change servoPosition accordingly
+            .addState("released", -0.1) // test and change servoPosition accordingly
+            .build();
 
-        // Create rotator servo
-        ServoMechanism.Builder rotatorBuilder = new ServoMechanism.Builder();
-        rotatorBuilder.setServo(hardwareMap, "rotator");
-        rotatorBuilder.addState("scoring", 0.6); // test and change servoPosition accordingly
-        rotatorBuilder.addState("collecting", 0.1); // test and change servoPosition accordingly
-        ServoMechanism rotator = rotatorBuilder.build();
+        // Create left rotator servo
+        ServoMechanism.Builder leftRotatorBuilder = new ServoMechanism.Builder();
+        leftRotatorBuilder.setServo(hardwareMap, "leftRotator");
+        leftRotatorBuilder.addState("scoring", 0.6); // test and change servoPosition accordingly
+        leftRotatorBuilder.addState("collecting", 0.1); // test and change servoPosition accordingly
+        ServoMechanism leftRotator = leftRotatorBuilder.build();
+
+        // Create right rotator servo
+        ServoMechanism.Builder rightRotatorBuilder = new ServoMechanism.Builder();
+        rightRotatorBuilder.setServo(hardwareMap, "rightRotator");
+        rightRotatorBuilder.addState("scoring", 0.3); // test and change servoPosition accordingly
+        rightRotatorBuilder.addState("collecting", 0.1); // test and change servoPosition accordingly
+        ServoMechanism rightRotator = rightRotatorBuilder.build();
+        rightRotator.setDirection(Servo.Direction.REVERSE);
 
         // Create launcher servo
         ServoMechanism.Builder launcherBuilder = new ServoMechanism.Builder();
@@ -161,14 +170,19 @@ public class FCMainTeleOp extends LinearOpMode {
             currentRotatorPress = gamepad2.y;
             if (currentRotatorPress == true && previousRotatorPress == false) {
                 previousRotatorPress = currentRotatorPress;
-                if (rotator.getCurrentState().stateName == "collecting") { rotator.setStateByName("scoring"); }
-                else if (rotator.getCurrentState().stateName == "scoring") { rotator.setStateByName("collecting"); }
+                if (leftRotator.getCurrentState().stateName == "collecting") {
+                    leftRotator.setStateByName("scoring");
+                    rightRotator.setStateByName("scoring");
+                }
+                else if (leftRotator.getCurrentState().stateName == "scoring") {
+                    leftRotator.setStateByName("collecting");
+                    rightRotator.setStateByName("collecting");
+                }
             }
             else if (currentRotatorPress == false && previousRotatorPress == true) { previousRotatorPress = currentRotatorPress; }
 
             // Launcher Logic
             if (gamepad1.left_bumper && gamepad1.right_bumper && gamepad2.left_bumper && gamepad2.right_bumper)
-//            if (gamepad2.left_bumper)
             { launcher.setStateByName("launching"); }
             else { launcher.setStateByName("standby"); }
 
@@ -177,7 +191,7 @@ public class FCMainTeleOp extends LinearOpMode {
             telemetry.addData("forward, strafe, rotate", driveTelemetry);
             telemetry.addData("slide position", slideMotor.getCurrentPosition());
             telemetry.addData("leftClaw State, rightClaw State", leftClaw.getCurrentState().stateName + ", " + rightClaw.getCurrentState().stateName);
-            telemetry.addData("rotator State, rotator Position", rotator.getCurrentState().stateName + ", " + rotator.getServo().getPosition());
+            // telemetry.addData("rotator State, rotator Position", rotator.getCurrentState().stateName + ", " + rotator.getServo().getPosition());
             telemetry.addData("launcher State, launcher Position", launcher.getCurrentState().stateName + ", " + launcher.getServo().getPosition());
             telemetry.addData("driving mode", driveState);
             telemetry.update();
